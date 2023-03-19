@@ -135,7 +135,7 @@ Visualizes the decision tree using Graphviz. It creates a graphical representati
 </details>
 
 
-### Pruner class - To be continued
+### Pruner class
 
 The simplest technique is to prune out portions of the tree that result in the least impurity gain. This procedure does not require any additional data, and only bases the pruning on the information that is already computed when the tree is being built from training data.
 The process of IG-based pruning requires us to identify “twigs”, nodes whose children are all leaves. “Pruning” a twig removes all of the leaves which are the children of the twig, and makes the twig a leaf. 
