@@ -4,7 +4,15 @@ from graphviz import Digraph
 
 # Create class node
 class Node:
-    def __init__(self, feature_index=None, threshold=None, value=None, left=None, right=None, impurity_gain=None):
+    def __init__(
+        self,
+        feature_index=None,
+        threshold=None,
+        value=None,
+        left=None,
+        right=None,
+        impurity_gain=None,
+    ):
         """
         Initializes a node with some specified hyperparameters.
         """
@@ -15,8 +23,9 @@ class Node:
         self.right = right  # right subtree
         self.impurity_gain = impurity_gain  # impurity gain
 
+
 class CART:
-    def __init__(self, criterion='gini', max_depth=None, min_samples_split=2):
+    def __init__(self, criterion="gini", max_depth=None, min_samples_split=2):
         """
         Initializes the decision tree with the specified hyperparameters, such as criterion, max_depth, and min_samples_split.
         """
@@ -31,7 +40,6 @@ class CART:
         """
         self.tree = self._build_tree(X, y)
 
-
     def predict(self, X):
         """
         Predicts the output label for the input data (X) based on the decision tree.
@@ -40,13 +48,13 @@ class CART:
 
     def _build_tree(self, X, y, depth=0):
         """
-        _build_tree: Builds the decision tree recursively. The first thing the method does is to check if the stopping criteria for tree building are met. 
+        _build_tree: Builds the decision tree recursively. The first thing the method does is to check if the stopping criteria for tree building are met.
         If they are, the method returns a leaf node with the predicted value for the subset of data points passed in. If not, the method selects the best
-        feature to split the data based on the Gini impurity index. Once the best feature is selected, the data is split into two subsets based on the feature's value. 
+        feature to split the data based on the Gini impurity index. Once the best feature is selected, the data is split into two subsets based on the feature's value.
         The function then recursively calls itself on each subset of data points until it reaches the stopping criteria or there are no more features to split on.
         The depth parameter tracks the current depth of the tree and is used to enforce the stopping criteria. If the maximum depth is reached or the number of data
         points in a subset is less than or equal to the minimum number of samples required to split a node, a leaf node is returned with the predicted value for the subset of data points.
-        The _build_tree method returns a node object that represents a decision in the decision tree. This object contains information about the feature used to split the data, 
+        The _build_tree method returns a node object that represents a decision in the decision tree. This object contains information about the feature used to split the data,
         the threshold value for the split, and the left and right child nodes. The left child node contains the subset of data points with values less than or equal to the threshold value,
         while the right child node contains the subset of data points with values greater than the threshold value.
         """
@@ -54,20 +62,32 @@ class CART:
         num_classes = len(np.unique(y))
 
         # Stopping criteria
-        if (self.max_depth is not None and depth >= self.max_depth) or num_samples < self.min_samples_split or num_classes == 1:
+        if (
+            (self.max_depth is not None and depth >= self.max_depth)
+            or num_samples < self.min_samples_split
+            or num_classes == 1
+        ):
             leaf_value = self._leaf_value(y)
             return Node(value=leaf_value)
 
         # Find the best split
-        feature_indices = np.random.choice(num_features, self._get_num_features(num_features))
+        feature_indices = np.random.choice(
+            num_features, self._get_num_features(num_features)
+        )
         best_feature, best_threshold, gain = self._best_split(X, y, feature_indices)
 
         # Split the data
         left_indices, right_indices = self._split(X[:, best_feature], best_threshold)
-        left_tree = self._build_tree(X[left_indices, :], y[left_indices], depth+1)
-        right_tree = self._build_tree(X[right_indices, :], y[right_indices], depth+1)
+        left_tree = self._build_tree(X[left_indices, :], y[left_indices], depth + 1)
+        right_tree = self._build_tree(X[right_indices, :], y[right_indices], depth + 1)
 
-        return Node(best_feature, best_threshold, left=left_tree, right=right_tree, impurity_gain=gain)
+        return Node(
+            best_feature,
+            best_threshold,
+            left=left_tree,
+            right=right_tree,
+            impurity_gain=gain,
+        )
 
     def _get_num_features(self, num_features):
         """
@@ -77,17 +97,17 @@ class CART:
 
     def _best_split(self, X, y, feature_indices):
         """
-        _best_split: Finds the best feature and threshold to split on based on the impurity gain. Inside the method, 
-        it first initializes the best_split variable to None and the lowest_gini variable to inf. 
-        It then loops through each potential split in potential_splits, and for each split, it loops through each feature value in the split. 
+        _best_split: Finds the best feature and threshold to split on based on the impurity gain. Inside the method,
+        it first initializes the best_split variable to None and the lowest_gini variable to inf.
+        It then loops through each potential split in potential_splits, and for each split, it loops through each feature value in the split.
         For each feature value, it splits the data into two groups based on the feature value: one group where the feature value is less than or equal to the threshold,
         and one group where the feature value is greater than the threshold.
-        
+
         For each split, it calculates the Gini impurity of the two groups using the _calculate_gini method. It then calculates the weighted average of the Gini impurities for the two groups,
         weighted by the size of each group. This is the Gini impurity for the split. If the Gini impurity for the split is less than lowest_gini, it updates lowest_gini to be the Gini impurity
         for the split, and best_split to be the split.
         """
-        best_gain = -float('inf')
+        best_gain = -float("inf")
         split_index, split_threshold = None, None
 
         for i in feature_indices:
@@ -123,16 +143,18 @@ class CART:
         num_left, num_right = len(left_indices), len(right_indices)
         impurity_left = self._impurity(y[left_indices])
         impurity_right = self._impurity(y[right_indices])
-        child_impurity = (num_left/len(y)) * impurity_left + (num_right / len(y)) * impurity_right
+        child_impurity = (num_left / len(y)) * impurity_left + (
+            num_right / len(y)
+        ) * impurity_right
         return parent_impurity - child_impurity
 
     def _impurity(self, y):
         """
         _impurity: Computes the impurity of the node based on the criterion (gini or mse).
         """
-        if self.criterion == 'gini':
+        if self.criterion == "gini":
             return self._gini_impurity(y)
-        elif self.criterion == 'mse':
+        elif self.criterion == "mse":
             return self._mse(y)
 
     def _gini_impurity(self, y):
@@ -148,15 +170,15 @@ class CART:
         """
         _mse: Computes the mean squared error of the node.
         """
-        return np.mean((y - np.mean(y))**2)
+        return np.mean((y - np.mean(y)) ** 2)
 
     def _leaf_value(self, y):
         """
         _leaf_value: Computes the value to assign to a leaf node based on the criterion (most common label or mean).
         """
-        if self.criterion == 'gini':
+        if self.criterion == "gini":
             return self._most_common_label(y)
-        elif self.criterion == 'mse':
+        elif self.criterion == "mse":
             return np.mean(y)
 
     def _most_common_label(self, y):
@@ -177,3 +199,39 @@ class CART:
             return self._predict(x, tree.left)
         else:
             return self._predict(x, tree.right)
+
+    # Visualization
+    def visualize_tree(self, filename):
+        """
+        visualize_tree: Visualizes the decision tree using graphviz.
+        """
+        dot = Digraph()
+        self._add_nodes(self.tree, dot)
+        self._add_edges(self.tree, dot)
+        dot.render(filename, view=True)
+
+    def _add_nodes(self, tree, dot):
+        """
+        _add_nodes: Adds nodes to the visualization
+        """
+        if tree.value is not None:
+            label = f"Value: {tree.value:.2f}"
+        else:
+            label = f"X[{tree.feature_index}] <= {tree.threshold:.2f}"
+        dot.node(str(tree), label)
+
+        if tree.left is not None:
+            self._add_nodes(tree.left, dot)
+        if tree.right is not None:
+            self._add_nodes(tree.right, dot)
+
+    def _add_edges(self, tree, dot):
+        """
+        _add_edges: Add edges to the visualization
+        """
+        if tree.left is not None:
+            dot.edge(str(tree), str(tree.left), "<=")
+            self._add_edges(tree.left, dot)
+        if tree.right is not None:
+            dot.edge(str(tree), str(tree.right), ">")
+            self._add_edges(tree.right, dot)
