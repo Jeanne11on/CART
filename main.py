@@ -7,7 +7,7 @@ from random import randrange
 from math import sqrt
 
 from decision_tree import CART
-from pruner_bis import Pruner
+from pruner import Pruner
 
 
 ## Testing
