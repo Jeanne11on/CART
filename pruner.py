@@ -3,17 +3,24 @@ import numpy as np
 
 class Pruner:
     def __init__(self, tree, desired_num_leaves):
+        '''
+        Initializes the pruner class with tree and desired number of leaves.
+        '''
         self.tree = tree.tree
         self.desired_num_leaves = desired_num_leaves
         self.num_leaves = 0
         self.criterion = tree.criterion
 
     def catalog_twigs(self):
+        '''Register all the twigs (nodes with only leaves as children) of the tree.
+        '''
         twigs = []
         self._catalog(self.tree, twigs)
         return twigs
 
     def _catalog(self, node, twigs):
+        '''Pin all if a node is a twig in a tree.
+        '''
         if node.value is None:
             if node.left.value is not None and node.right.value is not None:
                 twigs.append(node)
@@ -21,11 +28,15 @@ class Pruner:
             self._catalog(node.right, twigs)
 
     def count_leaves(self):
+        '''Count the leaves in the tree.
+        '''
         leaves = []
         self._count_leaves(self.tree, leaves)
         return len(leaves)
 
     def _count_leaves(self, node, leaves):
+        '''Register all the leaves in the tree.
+        '''
         if node.value is not None:
             leaves.append(node)
         else:
@@ -33,7 +44,7 @@ class Pruner:
             self._count_leaves(node.right, leaves)
 
     def prune_tree(self):
-      '''For now, finds the twig with least impurity gain, deletes its children and transforms it into a leaf
+      '''Catalog all the twigs, and until the desired number of leaves is reached, finds the twig with least impurity gain, deletes its children and transforms it into a leaf.
       '''
       twigs = self.catalog_twigs()
       if len(twigs) == 0:
@@ -66,7 +77,7 @@ class Pruner:
         # we update count_leaves based on the new tree
         self.num_leaves = self.count_leaves()
 
-        #Todo: update the impurity and impurity gain of the nodes involved in this pruning 
+        #Todo: update the impurity and impurity gain of the nodes involved in this pruning
 
 
 
