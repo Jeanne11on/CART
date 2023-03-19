@@ -10,34 +10,22 @@ from sklearn.metrics import accuracy_score
 iris = load_iris()
 X_train, X_test, y_train, y_test = train_test_split(
     iris.data, iris.target, test_size=0.2, random_state=42)
+
 cart_classifier = CART(criterion='gini', max_depth=5, min_samples_split=2)
 cart_classifier.fit(X_train, y_train)
 y_pred = cart_classifier.predict(X_test)
 print('Classification Accuracy:', accuracy_score(y_test, y_pred))
-cart_classifier.visualize_tree('whole_tree')
-
-'''
-#pruner = Pruner()
-pruner = Pruner(cart_classifier.tree, 5)
-twigs = pruner.catalog_twigs()
-nb_leaves = pruner.count_leaves()
-twig_1 = twigs[0]
-print(twig_1.threshold, twig_1.impurity_gain, twig_1.left.value)
-'''
-
-#cart_classifier.fit(X_train, y_train)
-#y_pred = cart_classifier.predict(X_test)
-#print('Classification Accuracy pruned:', accuracy_score(y_test, y_pred))
-#cart_classifier.visualize_tree('pruned_tree')
+cart_classifier.visualize_tree('clf_tree')
 
 
 ## We prune the tree
-#pruner = Pruner(cart_classifier)
-#pruner.prune()
-#y_pred_pruned = cart_classifier.predict(X_test)
-#print('Classification Accuracy:', accuracy_score(y_test, y_pred))
+pruner = Pruner(cart_classifier, 5)
+pruner.prune_tree()
+y_pred_pruned = cart_classifier.predict(X_test)
+print('Classification Accuracy:', accuracy_score(y_test, y_pred))
+cart_classifier.visualize_tree('pruned_clf_tree')
 
-'''
+
 ##### Regressor
 rng = np.random.RandomState(1)
 X_reg = np.sort(5 * rng.rand(80, 1), axis=0)
@@ -55,8 +43,10 @@ cart_regressor = CART(criterion='mse', max_depth=5, min_samples_split=2)
 cart_regressor.fit(X_train, y_train)
 y_pred = cart_regressor.predict(X_test)
 print('Regression MSE:', mean_squared_error(y_test, y_pred))
-'''
+cart_regressor.visualize_tree('reg_tree')
 
-
-
-
+pruner = Pruner(cart_regressor, 15)
+pruner.prune_tree()
+y_pred_pruned = cart_regressor.predict(X_test)
+print('Regression MSE:', mean_squared_error(y_test, y_pred))
+cart_regressor.visualize_tree('pruned_reg_tree')
