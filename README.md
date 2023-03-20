@@ -1,6 +1,8 @@
 # CART
 This is an implementation of the Classification and Regression Tree (CART) algorithm from scratch in Python. CART is a decision tree algorithm that can be used for both classification and regression tasks. The goal of the algorithm is to create a binary tree that recursively splits the training data into subsets that are as pure as possible.
 
+Worked on this project: Nan Chen, Lucrezia Certo, Clara Besnard, Yu-hsin LIao, Léopold Granger
+
 ## Dependencies
 The following dependencies are required:
 - NumPy
