@@ -11,7 +11,7 @@ The following dependencies are required:
 
 ## Structure
 The project has three files: "CART.py", "pruner.py", and "main.py"
-- The "CART.py" file contains the implementation of the decision tree using the Classification and Regression Tree (CART) algorithm.
+- The "decision_tree.py" file contains the implementation of the decision tree using the Classification and Regression Tree (CART) algorithm.
 - The "pruner.py" file contains the implementation of a pruner that can prune the decision tree to prevent overfitting.
 - The "main.py" file is the entry point to the program and is used to run the classes on real datasets. It likely includes code that reads in the data, pre-processes it, and trains and evaluates the decision tree and pruner.
 
